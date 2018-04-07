@@ -15,7 +15,18 @@ extern "C" {
 #define TWI_FL_ERROR    0x80    // Unknown error
 
 
-bool hal_twi_check_pin(void);
+bool    hal_twi_check_pin(void);
+void    hal_twi_enable(void);
+void    hal_twi_disable(void);
+
+uint8_t hal_twi_status(void);
+uint8_t hal_twi_start(uint8_t addr, uint8_t toWr, uint8_t toRd, uint8_t *pBuf);
+void    hal_twi_stop(void);
+uint8_t hal_twi_get_data(uint8_t * pData);
+
+// ISR Section
+void I2C1_ER_IRQHandler(void);
+void I2C1_EV_IRQHandler(void);
 
 #ifdef __cplusplus
 }
