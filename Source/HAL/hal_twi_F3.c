@@ -79,19 +79,15 @@ void hal_twi_enable(void)
     NVIC_EnableIRQ(I2C1_EV_IRQn);
     NVIC_SetPriority(I2C1_ER_IRQn, 0);
     NVIC_EnableIRQ(I2C1_ER_IRQn);
-
-    // Init Variables
-    twi_access = 0;
-    twi_pnt = 0;
-    twi_address = 0;
-    twi_write = 0;
-    twi_read = 0;
 }
 
 void hal_twi_disable(void)
 {
     NVIC_DisableIRQ(I2C1_EV_IRQn);
     NVIC_DisableIRQ(I2C1_ER_IRQn);
+
+    I2C1->CR1 &= ~I2C_CR1_PE;                                // Disable I2C
+    twi_access = 0;
 
     // Reset I2C1
     RCC->APB1RSTR |= RCC_APB1RSTR_I2C1RST;
@@ -128,6 +124,7 @@ uint8_t hal_twi_start(uint8_t addr, uint8_t toWr, uint8_t toRd, uint8_t *pBuf)
     // Prepare variables
     twi_address = addr;
     twi_access = 0;
+    twi_pnt = 0;
 
     if(toWr != 0xFF)
     {
@@ -138,11 +135,19 @@ uint8_t hal_twi_start(uint8_t addr, uint8_t toWr, uint8_t toRd, uint8_t *pBuf)
         }
         twi_write = toWr;
     }
+    else
+    {
+        twi_write = 0;
+    }
 
     if(toRd != 0xFF)
     {
         twi_access |= TWI_FL_READ;
         twi_read = toRd;
+    }
+    else
+    {
+        twi_read = 0;
     }
 
     // Start Communication
@@ -198,12 +203,6 @@ uint8_t hal_twi_start(uint8_t addr, uint8_t toWr, uint8_t toRd, uint8_t *pBuf)
     return 0x00;
 }
 
-void hal_twi_stop(void)
-{
-    I2C1->CR1 &= ~I2C_CR1_PE;                                // Disable I2C
-    twi_access = 0;
-}
-
 uint8_t hal_twi_get_data(uint8_t * pData)
 {
     if(twi_read != 0)
@@ -237,7 +236,7 @@ void I2C1_EV_IRQHandler(void)
         if(twi_pnt == 0)
         {
             I2C1->CR1 = I2C_CR1_PE;                         // Disable Interrupts
-            twi_access |= TWI_FL_SLANACK;
+            twi_access = TWI_FL_SLANACK;
         }
         else if(twi_access & TWI_FL_WRITE)
         {
