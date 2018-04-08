@@ -4,7 +4,7 @@
 
 // USART 2, PA2/PA15
 
-#define HAL_SIZEOF_UART_RX_FIFO     64
+#define HAL_SIZEOF_UART_RX_FIFO     256
 
 #define hal_pclk1                   18000000UL
 #define HAL_USART2_AF               ((7<<DIO_AF_OFFS) | DIO_MODE_AF_PP)
