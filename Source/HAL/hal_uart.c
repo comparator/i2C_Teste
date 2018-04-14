@@ -70,7 +70,8 @@ uint8_t hal_uart_get(void)
     return retval;
 }
 
-bool hal_uart_free(void)
+/*
+static bool hal_uart_free(void)
 {
     if(USART2_TX_DMA->CCR & DMA_CCR_EN)
     {
@@ -85,7 +86,7 @@ bool hal_uart_free(void)
     }
     return true;
 }
-
+*/
 void hal_uart_send(uint8_t len, uint8_t * pBuf)
 {
     // DMA1 USART2_TX config
@@ -99,4 +100,12 @@ void hal_uart_send(uint8_t len, uint8_t * pBuf)
                                                         // Peripheral increment disabled
                             DMA_CCR_DIR |               // Read from memory
                             DMA_CCR_EN;                 // DMA Channel Enable
+
+    while((USART2_TX_DMA->CCR & DMA_CCR_EN) != 0)
+    {
+        if(USART2_TX_DMA->CNDTR == 0)
+        {
+            USART2_TX_DMA->CCR &= ~DMA_CCR_EN;
+        }
+    }
 }

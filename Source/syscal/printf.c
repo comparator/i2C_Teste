@@ -580,7 +580,7 @@ static size_t _vsnprintf(char* buffer, size_t buffer_len, const char* format, va
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
+/*
 int printf(const char* format, ...)
 {
   va_list va;
@@ -593,7 +593,7 @@ int printf(const char* format, ...)
   }
   return (int)ret;
 }
-
+*/
 
 int sprintf(char* buffer, const char* format, ...)
 {
@@ -604,7 +604,7 @@ int sprintf(char* buffer, const char* format, ...)
   return (int)ret;
 }
 
-
+/*
 int snprintf(char* buffer, size_t count, const char* format, ...)
 {
   va_list va;
@@ -613,3 +613,4 @@ int snprintf(char* buffer, size_t count, const char* format, ...)
   va_end(va);
   return (int)ret;
 }
+*/
